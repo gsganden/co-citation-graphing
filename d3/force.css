@@ -1,0 +1,11 @@
+circle.node {
+  stroke: #fff;
+  stroke-width: 1000.5px;
+}
+
+line.link {
+  stroke: #999;
+  stroke-opacity: .4;
+}
+
+.nodetext { pointer-events: none; font: 10px; font-size: 12px;
