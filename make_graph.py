@@ -15,7 +15,7 @@ redundant_cites = []
 
 with open(data, 'r') as f:
     # Replace line breaks within a field with tabs before splitting by line
-    data_fields = f.read().replace('\n   ','\t').split('\n')
+    data_fields = f.read().replace('\n   ', '\t').split('\n')
 
 for field in data_fields:
     if field[:2] == "CR":  # Check that data field is a citation record
@@ -38,22 +38,23 @@ for field in data_fields:
                     cite_counter[cite_id] = cite_counter.get(cite_id, 0) + 1
                     processed_cites.append(cite_id)
                     for processed_cite in processed_cites:
-                        first_cite, second_cite = sorted([cite_id, 
+                        first_cite, second_cite = sorted([cite_id,
                                                           processed_cite])
                         co_cite_counter[(first_cite, second_cite)] =\
-                            co_cite_counter.get((first_cite, second_cite), 0) + 1
+                            co_cite_counter.get((first_cite,
+                                                 second_cite), 0) + 1
                     processed_cites.append(cite_id)
 
 graph = nx.Graph()
 num_edges = 0
-full_cites = [] # Captures full citation information
+full_cites = []  # Captures full citation information to display below graph
 
 for cite_pair in co_cite_counter:
     if cite_counter[cite_pair[0]] >= cite_threshold\
-    and cite_counter[cite_pair[1]] >= cite_threshold\
-    and co_cite_counter[cite_pair] >= co_cite_threshold:
+            and cite_counter[cite_pair[1]] >= cite_threshold\
+            and co_cite_counter[cite_pair] >= co_cite_threshold:
         graph.add_edge(cite_pair[0], cite_pair[1],
-                   weight=co_cite_counter[cite_pair])
+                       weight=co_cite_counter[cite_pair])
         for cite in cite_pair:
             if cite not in full_cites:
                 full_cites.append(cite)
@@ -71,9 +72,10 @@ with open('results/graph.json', 'rb') as graph_json:
     fix = graph_json.read()
     for node in graph:
         try:
-            fix=re.sub(str(node) + '"', 
-                       str(node) + '" , "nodeSize":' + str(cite_dict[node]),
-                       fix)
+            fix = re.sub(str(node) + '"',
+                         str(node) + '" , "nodeSize":' +
+                         str(cite_counter[node]),
+                         fix)
         except:
             print 'Error with %s' % node
 
